@@ -7,5 +7,8 @@ defmodule TransactionApiWeb.Router do
 
   scope "/api", TransactionApiWeb do
     pipe_through :api
+
+    resources "/events", EventController, except: [:new, :edit]
+    resources "/event_details", EventDetailController, except: [:new, :edit]
   end
 end

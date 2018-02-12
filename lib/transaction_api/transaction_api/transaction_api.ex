@@ -1,12 +1,12 @@
-defmodule TransactionApi.TransactionApi do
+defmodule TransactionApi.Message do
   @moduledoc """
-  The TransactionApi context.
+  The Message context.
   """
 
   import Ecto.Query, warn: false
   alias TransactionApi.Repo
 
-  alias TransactionApi.TransactionApi.Event
+  alias TransactionApi.Messages.Event
 
   @doc """
   Returns the list of events.
