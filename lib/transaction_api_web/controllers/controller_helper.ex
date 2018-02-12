@@ -2,10 +2,10 @@ defmodule TransactionApiWeb.ControllerHelper do
 
   def parse_incoming payloads do
     IO.inspect payloads
-      payloads
-      |> Poison.decode!
-      |> Enum.at(0)
-      |> get_msg
+    payloads
+    |> Poison.decode!
+    |> Enum.at(0)
+    |> get_msg
   end
 
   defp get_msg payload do
@@ -18,18 +18,20 @@ defmodule TransactionApiWeb.ControllerHelper do
       Map.update!(elem, "ts", &DateTime.from_unix!/1)
     end)
     %{
-      uniq_id: get_in(payload, ["_id"]),
-      ts: get_in(payload, ["ts"]) |> DateTime.from_unix!,
-      ip: get_in(payload, ["ip"]),
-      sender: get_in(payload, ["msg", "sender"]),
-      template: get_in(payload, ["msg", "template"]),
-      subject: get_in(payload, ["msg", "subject"]),
-      email: get_in(payload, ["msg", "email"]),
-      tags: get_in(payload, ["msg", "tags"]),
-      status: get_in(payload, ["msg", "state"]),
-      city: get_in(payload, ["location", "city"]),
-      user_agent: get_in(payload, ["user_agent"]),
-      event: get_in(payload, ["event"]),
+      event: %{
+        uniq_id: get_in(payload, ["_id"]),
+        ts: get_in(payload, ["ts"]) |> DateTime.from_unix!,
+        ip: get_in(payload, ["ip"]),
+        sender: get_in(payload, ["msg", "sender"]),
+        template: get_in(payload, ["msg", "template"]),
+        subject: get_in(payload, ["msg", "subject"]),
+        email: get_in(payload, ["msg", "email"]),
+        tags: get_in(payload, ["msg", "tags"]),
+        status: get_in(payload, ["msg", "state"]),
+        city: get_in(payload, ["location", "city"]),
+        user_agent: get_in(payload, ["user_agent"]),
+        event: get_in(payload, ["event"]),
+      },
       event_details: new_maps
     }
   end

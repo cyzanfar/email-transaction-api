@@ -14,9 +14,10 @@ defmodule TransactionApiWeb.EventController do
 
   def create(conn, %{"mandrill_events" => event_params}) do
     params = parse_incoming event_params
-    require IEx
-    IEx.pry()
     with {:ok, %Event{} = event} <- Messages.create_event(params) do
+      event
+      |> Messages.add_event_details(params[:event_details])
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event))

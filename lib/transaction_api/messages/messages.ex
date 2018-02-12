@@ -7,6 +7,7 @@ defmodule TransactionApi.Messages do
   alias TransactionApi.Repo
 
   alias TransactionApi.Messages.Event
+  alias TransactionApi.Messages.EventDetail
 
   @doc """
   Returns the list of events.
@@ -37,6 +38,14 @@ defmodule TransactionApi.Messages do
   """
   def get_event!(id), do: Repo.get!(Event, id)
 
+  def add_event_details(%Event{} = event, details) do
+    Enum.map(details, fn(event_detail) ->
+      event_detail
+      |> Map.put("event_id", event.id)
+      |> create_event_detail
+    end)
+  end
+
   @doc """
   Creates a event.
 
@@ -49,12 +58,11 @@ defmodule TransactionApi.Messages do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event(attrs \\ %{}) do
+  def create_event(%{event: event_params} \\ %{}) do
     %Event{}
-    |> Event.changeset(attrs)
+    |> Event.changeset(event_params)
     |> Repo.insert()
   end
-
   @doc """
   Updates a event.
 
