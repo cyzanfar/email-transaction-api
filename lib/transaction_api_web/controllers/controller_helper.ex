@@ -1,4 +1,5 @@
 defmodule TransactionApiWeb.ControllerHelper do
+  import Helpers.AccessHelper, only: [get_in_attempt: 2]
 
   def parse_incoming payloads do
     IO.inspect payloads
@@ -9,9 +10,9 @@ defmodule TransactionApiWeb.ControllerHelper do
   end
 
   defp get_msg payload do
-    merge_maps = get_in(
+    merge_maps = get_in_attempt(
       payload, ["msg", "clicks"]
-    ) ++ get_in(
+    ) ++ get_in_attempt(
       payload, ["msg", "opens"]
     )
     new_maps = Enum.map(merge_maps, fn elem ->
@@ -30,7 +31,7 @@ defmodule TransactionApiWeb.ControllerHelper do
         status: get_in(payload, ["msg", "state"]),
         city: get_in(payload, ["location", "city"]),
         user_agent: get_in(payload, ["user_agent"]),
-        event: get_in(payload, ["event"]),
+        event_type: get_in(payload, ["event"]),
       },
       event_details: new_maps
     }

@@ -15,6 +15,7 @@ defmodule TransactionApi.Messages.Event do
     field :ts, :utc_datetime
     field :uniq_id, :string
     field :user_agent, :string
+    field :event_type, :string
 
     has_many :event_details, EventDetail
 
@@ -24,7 +25,7 @@ defmodule TransactionApi.Messages.Event do
   @doc false
   def changeset(%Event{} = event, attrs) do
     event
-    |> cast(attrs, [:sender, :uniq_id, :ts, :template, :subject, :email, :status, :ip, :city, :user_agent])
+    |> cast(attrs, [:sender, :uniq_id, :ts, :template, :subject, :email, :status, :ip, :city, :user_agent, :event_type])
     |> validate_required([:sender, :uniq_id, :ts, :subject, :email, :status])
     |> cast_assoc(:event_details)
   end
