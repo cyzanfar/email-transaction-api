@@ -8,6 +8,9 @@ defmodule TransactionApi.Messages.EventDetail do
   schema "event_details" do
     field :ts, :utc_datetime
     field :url, :string
+    field :ip, :string
+    field :city, :string
+    field :user_agent, :string
 
     belongs_to :event, Event, foreign_key: :event_id
     timestamps()

@@ -58,11 +58,20 @@ defmodule TransactionApi.Messages do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event(%{event: event_params} \\ %{}) do
-    %Event{}
-    |> Event.changeset(event_params)
-    |> Repo.insert()
+  def create_event_or_update(%{event: event_params} \\ %{}) do
+    fetch_event = Repo.get_by(
+      Event, [uniq_id: event_params[:uniq_id],
+        event_type: event_params[:event_type]]
+    )
+    result =
+      case fetch_event do
+        nil ->  struct(%Event{}, event_params)
+        event -> event
+      end
+      |> Event.changeset(event_params)
+      |> Repo.insert_or_update
   end
+
   @doc """
   Updates a event.
 

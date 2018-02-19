@@ -15,9 +15,21 @@ defmodule TransactionApiWeb.ControllerHelper do
     ) ++ get_in_attempt(
       payload, ["msg", "opens"]
     )
+
+    main_map = %{
+      "ip" => get_in(payload, ["ip"]),
+      "city" => get_in(payload, ["location", "city"]),
+      "user_agent" => get_in(payload, ["user_agent"]),
+      "event_type" => get_in(payload, ["event"])
+    }
+
     new_maps = Enum.map(merge_maps, fn elem ->
       Map.update!(elem, "ts", &DateTime.from_unix!/1)
     end)
+    |> Enum.map(fn elem ->
+      Map.merge(elem, main_map)
+    end)
+
     %{
       event: %{
         uniq_id: get_in(payload, ["_id"]),
