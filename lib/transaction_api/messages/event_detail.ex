@@ -19,7 +19,7 @@ defmodule TransactionApi.Messages.EventDetail do
   @doc false
   def changeset(%EventDetail{} = event_detail, attrs) do
     event_detail
-    |> cast(attrs, [:url, :ts, :event_id])
+    |> cast(attrs, [:url, :ts, :event_id, :ip, :city, :user_agent])
     |> validate_required([:ts, :event_id])
   end
 end
