@@ -63,13 +63,12 @@ defmodule TransactionApi.Messages do
       Event, [uniq_id: event_params[:uniq_id],
         event_type: event_params[:event_type]]
     )
-    result =
-      case fetch_event do
-        nil ->  struct(%Event{}, event_params)
-        event -> event
-      end
-      |> Event.changeset(event_params)
-      |> Repo.insert_or_update
+    case fetch_event do
+      nil ->  struct(%Event{}, event_params)
+      event -> event
+    end
+    |> Event.changeset(event_params)
+    |> Repo.insert_or_update
   end
 
   @doc """

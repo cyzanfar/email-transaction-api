@@ -11,6 +11,7 @@ defmodule TransactionApi.Messages.EventDetail do
     field :ip, :string
     field :city, :string
     field :user_agent, :string
+    field :event_type, :string
 
     belongs_to :event, Event, foreign_key: :event_id
     timestamps()
@@ -19,7 +20,7 @@ defmodule TransactionApi.Messages.EventDetail do
   @doc false
   def changeset(%EventDetail{} = event_detail, attrs) do
     event_detail
-    |> cast(attrs, [:url, :ts, :event_id, :ip, :city, :user_agent])
+    |> cast(attrs, [:url, :ts, :event_id, :ip, :city, :user_agent, :event_type])
     |> validate_required([:ts, :event_id])
   end
 end

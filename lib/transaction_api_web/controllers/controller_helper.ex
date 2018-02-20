@@ -24,12 +24,11 @@ defmodule TransactionApiWeb.ControllerHelper do
     }
 
     new_maps = Enum.map(merge_maps, fn elem ->
-      Map.update!(elem, "ts", &DateTime.from_unix!/1)
+      elem
+      |> Map.update!("ts", &DateTime.from_unix!/1)
+      |> Map.merge(main_map)
     end)
-    |> Enum.map(fn elem ->
-      Map.merge(elem, main_map)
-    end)
-
+    
     %{
       event: %{
         uniq_id: get_in(payload, ["_id"]),
