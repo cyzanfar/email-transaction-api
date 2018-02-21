@@ -10,27 +10,19 @@ defmodule TransactionApiWeb.ControllerHelper do
   end
 
   defp get_msg payload do
-    merge_maps = get_in_attempt(
-      payload, ["msg", "clicks"]
-    ) ++ get_in_attempt(
-      payload, ["msg", "opens"]
-    )
+    merge_maps = merge_details payload
 
     main_map = %{
       "ip" => get_in(payload, ["ip"]),
       "city" => get_in(payload, ["location", "city"]),
       "user_agent" => get_in(payload, ["user_agent"]),
-      "event_type" => get_in(payload, ["event"])
     }
-
     new_maps = Enum.map(merge_maps, fn elem ->
       elem
       |> Map.update!("ts", &DateTime.from_unix!/1)
       |> Map.merge(main_map)
     end)
-
     IO.inspect new_maps
-
     %{
       event: %{
         uniq_id: get_in(payload, ["_id"]),
@@ -48,5 +40,21 @@ defmodule TransactionApiWeb.ControllerHelper do
       },
       event_details: new_maps
     }
+  end
+
+  defp merge_details(payload) do
+    clicks = get_in_attempt(
+      payload, ["msg", "clicks"])
+      |> Enum.map(fn elem ->
+        elem
+        |> Map.put("event_type", "click")
+      end)
+    opens = get_in_attempt(
+      payload, ["msg", "opens"])
+      |> Enum.map(fn elem ->
+        elem
+        |> Map.put("event_type", "open")
+      end)
+    clicks ++ opens
   end
 end

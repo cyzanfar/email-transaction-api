@@ -59,17 +59,6 @@ defmodule TransactionApi.Messages do
       {:error, %Ecto.Changeset{}}
 
   """
-
-
-  # open/click/send event comes in:
-  # check if there is an open event with same uniq_id
-  # if there is update that event with info
-  # if not create new one
-
-  # check if there is an open or click event. if event envent_type == event_Detail
-  # event type persist even add_event_details
-  # if they are not the same create a new event with event_type matching event_detail type +
-  # duplicate the event info initially recieved and persist event_detail with event_id related to that newly created event
   def process_events(event_params \\ %{}) do
     event_detail = extract_event_details(event_params[:event_details])
 
