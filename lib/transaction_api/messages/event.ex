@@ -26,7 +26,7 @@ defmodule TransactionApi.Messages.Event do
   def changeset(%Event{} = event, attrs) do
     event
     |> cast(attrs, [:sender, :uniq_id, :ts, :template, :subject, :email, :status, :ip, :city, :user_agent, :event_type])
-    |> validate_required([:sender, :uniq_id, :ts, :subject, :email, :status])
+    |> validate_required([:uniq_id, :ts])
     |> cast_assoc(:event_details)
   end
 end
