@@ -78,6 +78,9 @@ defmodule TransactionApi.Messages do
           Map.put(event_params, :event_type, "click")
           |> get_in([:event])
           |> create_or_update_event(event_detail[:clicks])
+    else
+      event_params[:event]
+      |> create_or_update_event(event_detail[:clicks])
     end
 
     if length(event_detail[:opens]) > 0
@@ -85,10 +88,10 @@ defmodule TransactionApi.Messages do
           Map.put(event_params, :event_type, "opens")
           |> get_in([:event])
           |> create_or_update_event(event_detail[:opens])
+    else
+      event_params[:event]
+      |> create_or_update_event(event_detail[:opens])
     end
-
-    event_params[:event]
-    |> create_or_update_event(event_detail[:opens])
   end
 
   defp create_or_update_event(event_params, details_params) do
