@@ -73,22 +73,22 @@ defmodule TransactionApi.Messages do
   def process_events(event_params \\ %{}) do
     event_detail = extract_event_details(event_params[:event_details])
 
-    cond do
-      length(event_detail[:clicks]) > 0
-        and event_params[:event_type] != "click" ->
+    if length(event_detail[:clicks]) > 0
+        and event_params[:event_type] != "click" do
           Map.put(event_params, :event_type, "click")
           |> get_in([:event])
           |> create_or_update_event(event_detail[:clicks])
+    end
 
-      length(event_detail[:opens]) > 0
-        and event_params[:event_type] != "opens" ->
+    if length(event_detail[:opens]) > 0
+        and event_params[:event_type] != "opens" do
           Map.put(event_params, :event_type, "opens")
           |> get_in([:event])
           |> create_or_update_event(event_detail[:opens])
-      true ->
-        event_params[:event]
-        |> create_or_update_event(event_detail[:opens])
     end
+
+    event_params[:event]
+    |> create_or_update_event(event_detail[:opens])
   end
 
   defp create_or_update_event(event_params, details_params) do
