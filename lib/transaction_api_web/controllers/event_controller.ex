@@ -14,9 +14,7 @@ defmodule TransactionApiWeb.EventController do
 
   def create(conn, %{"mandrill_events" => event_params}) do
     params = parse_incoming event_params
-    with {:ok, %Event{} = event} <- Messages.create_event_or_update(params) do
-      event
-      |> Messages.add_event_details(params[:event_details])
+    with {:ok, %Event{} = event} <- Messages.process_events(params) do
 
       conn
       |> put_status(:created)

@@ -30,7 +30,7 @@ defmodule TransactionApiWeb.ControllerHelper do
     end)
 
     IO.inspect new_maps
-    
+
     %{
       event: %{
         uniq_id: get_in(payload, ["_id"]),

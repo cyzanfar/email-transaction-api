@@ -44,6 +44,7 @@ defmodule TransactionApi.Messages do
       |> Map.put("event_id", event.id)
       |> create_event_detail
     end)
+    {:ok, event}
   end
 
   @doc """
@@ -58,7 +59,39 @@ defmodule TransactionApi.Messages do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event_or_update(%{event: event_params} \\ %{}) do
+
+
+  # open/click/send event comes in:
+  # check if there is an open event with same uniq_id
+  # if there is update that event with info
+  # if not create new one
+
+  # check if there is an open or click event. if event envent_type == event_Detail
+  # event type persist even add_event_details
+  # if they are not the same create a new event with event_type matching event_detail type +
+  # duplicate the event info initially recieved and persist event_detail with event_id related to that newly created event
+  def process_events(event_params \\ %{}) do
+    event_detail = extract_event_details(event_params[:event_details])
+
+    cond do
+      length(event_detail[:clicks]) > 0
+        and event_params[:event_type] != "click" ->
+          Map.put(event_params, :event_type, "click")
+          |> get_in([:event])
+          |> create_or_update_event(event_detail[:clicks])
+
+      length(event_detail[:opens]) > 0
+        and event_params[:event_type] != "opens" ->
+          Map.put(event_params, :event_type, "opens")
+          |> get_in([:event])
+          |> create_or_update_event(event_detail[:opens])
+      true ->
+        event_params[:event]
+        |> create_or_update_event(event_detail[:opens])
+    end
+  end
+
+  defp create_or_update_event(event_params, details_params) do
     fetch_event = Repo.get_by(
       Event, [uniq_id: event_params[:uniq_id],
         event_type: event_params[:event_type]]
@@ -69,6 +102,31 @@ defmodule TransactionApi.Messages do
     end
     |> Event.changeset(event_params)
     |> Repo.insert_or_update
+    |> case do
+      {:ok, %Event{} = event} ->
+          event
+          |> add_event_details(details_params)
+    end
+  end
+
+  defp extract_event_details(event_details) do
+    cond do
+      length(event_details) > 0 ->
+        %{
+          clicks: Enum.filter(event_details, fn detail ->
+            if detail["event_type"] == "click" do
+              detail
+            end
+          end),
+          opens: Enum.filter(event_details, fn detail ->
+            if detail["event_type"] == "open" do
+              detail
+            end
+          end)
+        }
+      true ->
+        %{clicks: [], opens: []}
+    end
   end
 
   @doc """
