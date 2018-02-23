@@ -37,8 +37,8 @@ defmodule TransactionApi.Messages do
     end
 
     if length(event_detail[:opens]) > 0
-        and event_params[:event][:event_type] != "opens" do
-          Map.put(event_params[:event], :event_type, "opens")
+        and event_params[:event][:event_type] != "open" do
+          Map.put(event_params[:event], :event_type, "open")
           |> create_or_update_event(event_detail[:opens])
     else
       event_params[:event]
