@@ -22,7 +22,7 @@ defmodule TransactionApiWeb.ControllerHelper do
       |> Map.update!("ts", &DateTime.from_unix!/1)
       |> Map.merge(main_map)
     end)
-    IO.inspect new_maps
+
     %{
       event: %{
         uniq_id: get_in(payload, ["_id"]),

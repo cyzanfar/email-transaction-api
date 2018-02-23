@@ -15,7 +15,6 @@ defmodule TransactionApiWeb.EventController do
   def create(conn, %{"mandrill_events" => event_params}) do
     params = parse_incoming event_params
     with {:ok, %Event{} = event} <- Messages.process_events(params) do
-
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event))

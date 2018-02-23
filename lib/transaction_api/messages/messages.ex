@@ -9,33 +9,10 @@ defmodule TransactionApi.Messages do
   alias TransactionApi.Messages.Event
   alias TransactionApi.Messages.EventDetail
 
-  @doc """
-  Returns the list of events.
-
-  ## Examples
-
-      iex> list_events()
-      [%Event{}, ...]
-
-  """
   def list_events do
     Repo.all(Event)
   end
 
-  @doc """
-  Gets a single event.
-
-  Raises `Ecto.NoResultsError` if the Event does not exist.
-
-  ## Examples
-
-      iex> get_event!(123)
-      %Event{}
-
-      iex> get_event!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_event!(id), do: Repo.get!(Event, id)
 
   def add_event_details(%Event{} = event, details) do
@@ -47,25 +24,12 @@ defmodule TransactionApi.Messages do
     {:ok, event}
   end
 
-  @doc """
-  Creates a event.
-
-  ## Examples
-
-      iex> create_event(%{field: value})
-      {:ok, %Event{}}
-
-      iex> create_event(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def process_events(event_params \\ %{}) do
     event_detail = extract_event_details(event_params[:event_details])
 
     if length(event_detail[:clicks]) > 0
-        and event_params[:event_type] != "click" do
-          Map.put(event_params, :event_type, "click")
-          |> get_in([:event])
+        and event_params[:event][:event_type] != "click" do
+          Map.put(event_params[:event], :event_type, "click")
           |> create_or_update_event(event_detail[:clicks])
     else
       event_params[:event]
@@ -73,9 +37,8 @@ defmodule TransactionApi.Messages do
     end
 
     if length(event_detail[:opens]) > 0
-        and event_params[:event_type] != "opens" do
-          Map.put(event_params, :event_type, "opens")
-          |> get_in([:event])
+        and event_params[:event][:event_type] != "opens" do
+          Map.put(event_params[:event], :event_type, "opens")
           |> create_or_update_event(event_detail[:opens])
     else
       event_params[:event]
@@ -106,14 +69,10 @@ defmodule TransactionApi.Messages do
       length(event_details) > 0 ->
         %{
           clicks: Enum.filter(event_details, fn detail ->
-            if detail["event_type"] == "click" do
-              detail
-            end
+            if detail["event_type"] == "click", do: detail
           end),
           opens: Enum.filter(event_details, fn detail ->
-            if detail["event_type"] == "open" do
-              detail
-            end
+            if detail["event_type"] == "open", do: detail
           end)
         }
       true ->
@@ -121,36 +80,12 @@ defmodule TransactionApi.Messages do
     end
   end
 
-  @doc """
-  Updates a event.
-
-  ## Examples
-
-      iex> update_event(event, %{field: new_value})
-      {:ok, %Event{}}
-
-      iex> update_event(event, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_event(%Event{} = event, attrs) do
     event
     |> Event.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Event.
-
-  ## Examples
-
-      iex> delete_event(event)
-      {:ok, %Event{}}
-
-      iex> delete_event(event)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_event(%Event{} = event) do
     Repo.delete(event)
   end

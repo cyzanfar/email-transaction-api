@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :transaction_api, TransactionApi.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "cyrusghazanfar",
+  password: "password",
   database: "transaction_api_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
